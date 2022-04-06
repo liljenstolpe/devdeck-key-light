@@ -4,9 +4,9 @@ import requests
 import time
 import threading
 
-from xdg.BaseDirectory import *
-
 from devdeck_core.controls.deck_control import DeckControl
+
+from xdg.BaseDirectory import *
 
 defaultIconPath = os.path.join(xdg_config_dirs[0], 'devdeck/assets')
 
@@ -16,7 +16,7 @@ class KeyLightToggleControl(DeckControl):
         self.__logger = logging.getLogger('devdeck')
         super().__init__(key_no, **kwargs)
     
-        self.iconPath = self.settings['iconPath'] or defaultIconPath
+        self.iconPath = self.settings.get('iconPath', defaultIconPath)
 
     def initialize(self):
 
@@ -87,15 +87,15 @@ class KeyLightToggleControl(DeckControl):
             'host': {
                 'type': 'string',
                 'required': True
-            }
+            },
             'lightOnIcon': {
                 'type': 'string',
                 'required': True 
-            }
-            'ligtOffIcon': {
+            },
+            'lightOffIcon': {
                 'type': 'string',
                 'required': True
-            }
+            },
             'iconPath': {
                 'type': 'string',
                 'required': False
