@@ -4,14 +4,19 @@ import requests
 import time
 import threading
 
+from xdg.BaseDirectory import *
+
 from devdeck_core.controls.deck_control import DeckControl
 
+defaultIconPath = os.path.join(xdg_config_dirs[0], 'devdeck/assets')
 
 class KeyLightToggleControl(DeckControl):
     def __init__(self, key_no, **kwargs):
         self.elgato = None
         self.__logger = logging.getLogger('devdeck')
         super().__init__(key_no, **kwargs)
+    
+        self.iconPath = self.settings['iconPath'] or defaultIconPath
 
     def initialize(self):
 
@@ -72,8 +77,27 @@ class KeyLightToggleControl(DeckControl):
                         .text_align('center') \
                         .end()
                 elif self.state == 1:
-                    r.image(os.path.join(os.path.dirname(__file__), "assets", 'key-light-on.png')).end()
+                    r.image(os.path.join(self.iconPath, self.setting['lightOnIcon'])).end()
                 else:
-                    r.image(os.path.join(os.path.dirname(__file__), "assets", 'key-light-off.png')).end()
+                    r.image(os.path.join(self.iconPath, self.setting['lightOffIcon'])).end()
+                    
 
-
+    def settings_schema(self):
+        return {
+            'host': {
+                'type': 'string',
+                'required': True
+            }
+            'lightOnIcon' {
+                'type': 'string',
+                'required': True 
+            }
+            'ligtOffIcon': {
+                'type': 'string',
+                'required': True
+            }
+            'iconPath': {
+                'type': 'string',
+                'required': False
+            }
+        }
