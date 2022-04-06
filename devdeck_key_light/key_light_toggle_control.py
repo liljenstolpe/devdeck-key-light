@@ -77,9 +77,9 @@ class KeyLightToggleControl(DeckControl):
                         .text_align('center') \
                         .end()
                 elif self.state == 1:
-                    r.image(os.path.join(self.iconPath, self.setting['lightOnIcon'])).end()
+                    r.image(os.path.join(self.iconPath, self.settings['lightOnIcon'])).end()
                 else:
-                    r.image(os.path.join(self.iconPath, self.setting['lightOffIcon'])).end()
+                    r.image(os.path.join(self.iconPath, self.settings['lightOffIcon'])).end()
                     
 
     def settings_schema(self):
