@@ -4,19 +4,15 @@ import requests
 import time
 import threading
 
-from devdeck_core.controls.deck_control import DeckControl
-
 from xdg.BaseDirectory import *
 
-defaultIconPath = os.path.join(xdg_config_dirs[0], 'devdeck/assets')
+from devdeck_core.controls.deck_control import DeckControl
 
 class KeyLightToggleControl(DeckControl):
     def __init__(self, key_no, **kwargs):
         self.elgato = None
         self.__logger = logging.getLogger('devdeck')
         super().__init__(key_no, **kwargs)
-    
-        self.iconPath = self.settings.get('iconPath', defaultIconPath)
 
     def initialize(self):
 
@@ -58,7 +54,9 @@ class KeyLightToggleControl(DeckControl):
                 self.state = 9
             
             self.render_icon(self.state)
-            time.sleep(0.5)
+            time.sleep( self.settings.get('scanRate') )
+#             time.sleep( self.scanRate )
+
         self.__logger.error("We should never exit the thread - oops!")
         exit(1)
 
@@ -77,27 +75,45 @@ class KeyLightToggleControl(DeckControl):
                         .text_align('center') \
                         .end()
                 elif self.state == 1:
-                    r.image(os.path.join(self.iconPath, self.settings['lightOnIcon'])).end()
+                    r.image(
+                        os.path.join(
+                            str(self.settings.get('iconPath')), 
+                            str(self.settings.get('lightOnIcon'))
+                        )
+                    ).end()
                 else:
-                    r.image(os.path.join(self.iconPath, self.settings['lightOffIcon'])).end()
-                    
-
+                    r.image(
+                        os.path.join(
+                            str(self.settings.get('iconPath')),
+                            str(self.settings.get('lightOffIcon'))
+                        )
+                    ).end()
+                                        
     def settings_schema(self):
+
         return {
             'host': {
                 'type': 'string',
                 'required': True
             },
+            'scanRate': {
+                'type': 'number',
+                'required': True,
+                'default': 0.1
+            },
             'lightOnIcon': {
                 'type': 'string',
-                'required': True 
+                'required': True,
+                'default': 'key-light-on.png'
             },
             'lightOffIcon': {
                 'type': 'string',
-                'required': True
+                'required': True,
+                'default': 'key-light-off.png'
             },
             'iconPath': {
                 'type': 'string',
-                'required': False
+                'required': True,
+                'default': str( os.path.join( xdg_config_home, 'devdeck/assets' ) )
             }
         }
